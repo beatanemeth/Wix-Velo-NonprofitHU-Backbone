@@ -1,0 +1,62 @@
+<!-- 
+ This code is placed here: 
+ Wix > Dashboard > Settings > Custom Code > Head 
+ Globally adjusts hyperlink styles and improves mobile responsiveness for text and buttons.
+ -->
+
+<style>
+	a:not(.DjQEyU):link u {
+		color: #0000ee !important;
+	}
+
+	a:not(.DjQEyU):hover {
+		color: #5a3e7a !important;
+	}
+
+	/* Wix Event links*/
+	a.DjQEyU:hover {
+		text-decoration: none;
+		transform: scale(1.1);
+		transition: transform 0.2s;
+	}
+
+	@media only screen and (max-width: 750px) {
+		h1 {
+			font-size: 42px !important;
+		}
+		h2 {
+			font-size: 35px !important;
+		}
+		h3 {
+			font-size: 29px !important;
+		}
+		h4 {
+			font-size: 24px !important;
+		}
+		h5 {
+			font-size: 20px !important;
+		}
+		h6 {
+			font-size: 17px !important;
+		}
+		/* paragraph large*/
+		.font-7 {
+			font-size: 18px !important;
+		}
+		/* paragraph normal*/
+		.font-8 {
+			font-size: 14px !important;
+		}
+		/* paragraph small*/
+		.font-9 {
+			font-size: 12px !important;
+		}
+		button {
+			font-size: 16px !important;
+		}
+		button:hover {
+			transform: scale(1.05);
+			transition: transform 0.2s ease;
+		}
+	}
+</style>

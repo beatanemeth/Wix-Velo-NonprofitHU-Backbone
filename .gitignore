@@ -1,0 +1,31 @@
+# Linux temporary files
+*~
+
+# macOS (in case the project is shared)
+.DS_Store
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Environment files (in case you create any)
+.env
+.env.*
+
+# Temp files and folders
+tmp/
+temp/
+*.tmp
+
+# Wix-specific: if any local development artifacts exist
+.wix/
+
+# Optional: Ignore everything except JavaScript files and this .gitignore
+# Uncomment if you only want to keep .js files
+# *
+# !*.js
+# !.gitignore
