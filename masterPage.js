@@ -1,6 +1,6 @@
 /**
- * masterPage.js
- * The code in this file will load on every page of your site
+ * Running code on all pages with Global code
+ * @url https://dev.wix.com/docs/develop-websites/articles/coding-with-velo/overview/where-do-i-put-my-code#running-code-on-all-pages-with-global-code
  */
 
 import wixWindowFrontend from 'wix-window-frontend';
@@ -11,7 +11,7 @@ const offset = 100;
 $w.onReady(function () {
 	/**
 	 * Automatically Update Copyright Year in Wix
-	 * https://forum.wixstudio.com/t/automatically-update-copyright-year-in-wix/6940
+	 * @url https://forum.wixstudio.com/t/automatically-update-copyright-year-in-wix/6940
 	 */
 
 	const currentYear = new Date().getFullYear();

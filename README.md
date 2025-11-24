@@ -1,7 +1,13 @@
-# Összehangolva Alapítvány – Wix Website
+# Hungarian Nonprofit Organization – Wix Website Reconstruction
 
-This repository contains custom Velo code for the [Összehangolva Alapítvány](https://www.kiutarakbol.hu) website.  
-The site is built using the **Wix Editor** (not Wix Studio) and enhanced with **Velo by Wix** for dynamic behavior, CMS-driven content, and custom logic.
+This repository contains custom **Wix Velo** code used for the reconstruction of a Hungarian nonprofit organization's website – [Összehangolva Alapítvány](https://www.kiutarakbol.hu) – during the Spring of 2025.
+
+The story of this reconstruction is detailed in the **LinkedIn article**:  
+👉 **[Not Just a Website: Building a Scalable Digital Backbone for a Nonprofit Team](https://www.linkedin.com/pulse/just-website-building-scalable-digital-backbone-nonprofit-nemeth-jgnke/)**
+
+The site is built with the **Wix Editor** (not Wix Studio) and enhanced with **Velo by Wix** to enable dynamic behavior, CMS-driven content, and custom logic.
+
+This repository provides insights into the technical structure, backend logic, and automation workflows implemented in the project.
 
 ---
 
@@ -120,6 +126,10 @@ In code, you use it like:
 ```js
 $w("#myDataset").onReady(() => { ... });
 ```
+
+The screenshot below shows where you can find the IDs for Collections and Datasets in your Wix Editor:
+
+![Collection ID vs Dataset ID](./assets/cms_collection-id_dataset-id.png)
 
 ### Multi-Reference Field Lookup
 

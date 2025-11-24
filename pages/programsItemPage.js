@@ -34,7 +34,7 @@ const categoriesPerPage = {
 /**
  * Main logic that runs when the page is ready.
  */
-$w.onReady(async () => {
+$w.onReady(async function () {
 	/******************************************************
 	 * If there is an event in the given category, display it, otherwise, render the fallback text.
 	 ******************************************************/
@@ -110,28 +110,23 @@ $w.onReady(async () => {
 	/******************************************************
 	 * If testimonials exist, show them; otherwise, show a fallback quote.
 	 ******************************************************/
-	$w(`#${TESTIMONIAL_DATASET_ID}`).onReady(() => {
-		$w(`#${TESTIMONIAL_DATASET_ID}`)
-			.getItems(0, 100)
-			.then((result) => {
-				const count = result.items.length;
-				console.log('Testimonials found:', count);
+	$w(TESTIMONIAL_DATASET_ID).onReady(async () => {
+		try {
+			const result = await $w(TESTIMONIAL_DATASET_ID).getItems(0, 100);
+			const count = result.items.length;
 
-				if (count === 0) {
-					console.log('No testimonials → showing quote');
-					$w('#testimonialColumnStrip').collapse();
-					$w('#quoteColumnStrip').expand();
-				} else {
-					console.log('Testimonials exist → showing testimonials');
-					$w('#testimonialColumnStrip').expand();
-					$w('#quoteColumnStrip').collapse();
-				}
-			})
-			.catch((error) => {
-				console.error('Error fetching testimonials:', error);
+			if (count === 0) {
 				$w('#testimonialColumnStrip').collapse();
 				$w('#quoteColumnStrip').expand();
-			});
+			} else {
+				$w('#testimonialColumnStrip').expand();
+				$w('#quoteColumnStrip').collapse();
+			}
+		} catch (error) {
+			console.error('Error fetching testimonials:', error);
+			$w('#testimonialColumnStrip').collapse();
+			$w('#quoteColumnStrip').expand();
+		}
 	});
 
 	/******************************************************
@@ -179,44 +174,46 @@ $w.onReady(async () => {
 	 * Display other related programs (excluding the current one)
 	 ***************************************************************/
 	// Get the current dynamic item's ID
-	$w('#dynamicDataset').onReady(() => {
-		const currentItem = $w('#dynamicDataset').getCurrentItem();
-		const currentItemId = currentItem._id;
+	$w('#dynamicDataset').onReady(async () => {
+		try {
+			const currentItem = $w('#dynamicDataset').getCurrentItem();
+			const currentItemId = currentItem._id;
 
-		console.log('Current item ID:', currentItemId);
+			console.log('Current item ID:', currentItemId);
 
-		/**
-		 * https://dev.wix.com/docs/velo/apis/wix-data/query
-		 */
-		wixData
-			.query(PROGRAMS_COLLECTION_ID)
-			// Include data from the referenced field (e.g., connected items from another collection).
-			// Without `.include()`, the reference field will return only IDs, not full objects.
-			.include(PROGRAMS_COLLECTION_REFERENCE_FIELD_KEY)
-			.find()
-			.then((results) => {
-				// Filter out the current item
-				const filteredItems = results.items.filter(
-					(item) => item._id !== currentItemId
-				);
+			/**
+			 * https://dev.wix.com/docs/velo/apis/wix-data/query
+			 */
+			const results = await wixData
+				.query(PROGRAMS_COLLECTION_ID)
+				// Include data from the referenced field (e.g., connected items from another collection).
+				// Without `.include()`, the reference field will return only IDs, not full objects.
+				.include(PROGRAMS_COLLECTION_REFERENCE_FIELD_KEY)
+				.find();
 
-				// Sort the items
-				const sortedItems = filteredItems.sort((a, b) => {
-					const aSort = a[MANUAL_SORT_FIELD] || '';
-					const bSort = b[MANUAL_SORT_FIELD] || '';
+			// Filter out the current item
+			const filteredItems = results.items.filter(
+				(item) => item._id !== currentItemId
+			);
 
-					// ASCENDING order: a → z
-					return aSort.localeCompare(bSort);
+			// Sort the items
+			const sortedItems = filteredItems.sort((a, b) => {
+				const aSort = a[MANUAL_SORT_FIELD] || '';
+				const bSort = b[MANUAL_SORT_FIELD] || '';
 
-					// DESCENDING order: z → a
-					// return bSort.localeCompare(aSort);
-				});
+				// ASCENDING order: a → z
+				return aSort.localeCompare(bSort);
 
-				// Assign sorted items to the repeater
-				$w('#eventsRepeater').data = sortedItems;
+				// DESCENDING order: z → a
+				// return bSort.localeCompare(aSort);
+			});
 
-				// Fill the repeater
-				$w('#eventsRepeater').onItemReady(($item, itemData) => {
+			// Assign sorted items to the repeater
+			$w('#eventsRepeater').data = sortedItems;
+
+			// Fill the repeater
+			$w('#eventsRepeater').onItemReady(($item, itemData) => {
+				try {
 					$item('#eventTitleText').text = itemData.title;
 					$item('#eventImage').src = itemData.image;
 					$item('#eventImage').alt = itemData.title;
@@ -226,13 +223,13 @@ $w.onReady(async () => {
 
 					const url = `${prefix}/${itemData.titleSlug}`;
 					// Make container clickable
-					$item('#eventContainer').onClick(() => {
-						wixLocation.to(url);
-					});
-				});
-			})
-			.catch((error) => {
-				console.error('Error loading related programs:', error);
+					$item('#eventContainer').onClick(() => wixLocation.to(url));
+				} catch (error) {
+					console.error('Error populating related program item:', error);
+				}
 			});
+		} catch (error) {
+			console.error('Error loading related programs:', error);
+		}
 	});
 });

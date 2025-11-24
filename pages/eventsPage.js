@@ -14,7 +14,7 @@ const PROGRAMS_COLLECTION_ID = 'yourProgramsCollectionID'; // Replace with your 
 const PROGRAMS_COLLECTION_REFERENCE_FIELD_KEY =
 	'yourProgramsCollectionReferenceFieldKey'; // Replace with your actual reference field key
 
-$w.onReady(function () {
+$w.onReady(async function () {
 	/******************************************************
 	 * Show lightbox with team member details when clicked
 	 ******************************************************/
@@ -80,38 +80,32 @@ $w.onReady(function () {
 	/**
 	 * Query the Testimonials collection (CMS) and sort by creation date
 	 */
-	wixData
-		.query(TESTIMONIALS_COLLECTION_ID)
-		.ascending('_createdDate')
-		.find()
-		.then((results) => {
-			console.log(`Found ${results.items.length} testimonials.`);
-			const testimonials = results.items;
+	try {
+		const results = await wixData
+			.query(TESTIMONIALS_COLLECTION_ID)
+			.ascending('_createdDate')
+			.find();
+		console.log(`Found ${results.items.length} testimonials.`);
+		const testimonials = results.items;
 
-			// Loop over the testimonials and populate each slide
-			slides.forEach((slide, index) => {
-				if (testimonials[index]) {
-					console.log(
-						`Populating slide ${index + 1} with testimonial titled: "${
-							testimonials[index].title
-						}"`
-					);
-					populateSlideWithTestimonial(testimonials[index], slide);
-				} else {
-					console.warn(`No testimonial for slide ${index + 1}`);
-				}
-			});
-		})
-		.catch((error) => {
-			console.error('Error loading testimonials:', error);
+		// Loop over the testimonials and populate each slide
+		slides.forEach((slide, index) => {
+			if (testimonials[index]) {
+				populateSlideWithTestimonial(testimonials[index], slide);
+			} else {
+				console.warn(`No testimonial for slide ${index + 1}`);
+			}
 		});
+	} catch (error) {
+		console.error('Error loading testimonials:', error);
+	}
 });
 
 /**
  * Helper function that populates one testimonial slide with the client name, testimonial text,
  * and the title of the related program.
  */
-function populateSlideWithTestimonial(
+async function populateSlideWithTestimonial(
 	item,
 	{ clientName, testimonialText, programName }
 ) {
@@ -125,21 +119,19 @@ function populateSlideWithTestimonial(
 
 	// Load the related program title using the multi-reference field "testimonials"
 	// from the Programs collection (reverse lookup)
-	wixData
-		.query(PROGRAMS_COLLECTION_ID)
-		.hasSome(PROGRAMS_COLLECTION_REFERENCE_FIELD_KEY, [item._id])
-		.find()
-		.then((programResults) => {
-			const programTitles = programResults.items.map(
-				(program) => program.title
-			);
-			console.log(`Related program titles: ${programTitles}`);
-			$w(programName).text = (programTitles[0] || 'N/A').toUpperCase();
-		})
-		.catch((error) => {
-			console.error('Error loading program title:', error);
-			$w(programName).text = 'N/A';
-		});
+	try {
+		const programResults = await wixData
+			.query(PROGRAMS_COLLECTION_ID)
+			.hasSome(PROGRAMS_COLLECTION_REFERENCE_FIELD_KEY, [item._id])
+			.find();
+
+		const programTitles = programResults.items.map((program) => program.title);
+
+		$w(programName).text = (programTitles[0] || 'N/A').toUpperCase();
+	} catch (error) {
+		console.error('Error loading program title:', error);
+		$w(programName).text = 'N/A';
+	}
 }
 
 /**

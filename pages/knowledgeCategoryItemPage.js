@@ -7,62 +7,77 @@
 import wixLocation from 'wix-location';
 import wixData from 'wix-data';
 
-const YOUR_COLLECTION_ID = 'yourCollectionID'; // Replace with your actual collection ID
-
-/******************************************************
- * Purpose: Filter out specific CMS categories from display, depending on the current page.
- ******************************************************/
-
-// Define categories hidden *only* on specific pages
-const hiddenCategoriesPerPage = {
-	'/orvosi-hatter-es-kezelesek': ['Orvosi háttér és kezelések'],
-	'/megkuzdes-es-kapcsolatok': ['Megküzdés és kapcsolatok'],
-	'/psziche-es-lelek': ['Psziché és lélek'],
-	'/taplalkozas': ['Táplálkozás'],
-};
-
-// Define categories always hidden, regardless of page
-const alwaysHiddenCategories = [
-	'Letölthető segédanyagok',
-	'Ajánlott gyakorlatok',
-	'Képzelet és belső munka',
-	'Test és mozgás',
-];
+const KNOWLEDGE_COLLECTION_ID = 'yourCollectionDatasetID'; // Replace with your actual dataset ID
+const KNOWLEDGE_COLLECTION_FIELD_KEY = 'yourCollectionFieldKey'; // Replace with your actual field key
+const PAGE_URL = 'yourUrlPath'; // Replace with your actual page URL path
 
 $w.onReady(async function () {
-	// Construct current path
-	const path = '/' + wixLocation.path.join('/');
-	const pageSpecificHidden = hiddenCategoriesPerPage[path] || [];
-	const allHidden = [...pageSpecificHidden, ...alwaysHiddenCategories];
-
-	console.log('Page path:', path);
-	console.log('Categories to hide:', allHidden);
+	// Current page path, e.g. '/megkuzdes-es-kapcsolatok'
+	const currentPath = wixLocation.path[0];
 
 	try {
-		/**
-		 * https://dev.wix.com/docs/velo/apis/wix-data/query
-		 */
-		let query = wixData.query(YOUR_COLLECTION_ID);
+		const results = await wixData
+			.query(KNOWLEDGE_COLLECTION_ID)
+			.include(KNOWLEDGE_COLLECTION_FIELD_KEY)
+			.find();
 
-		// Dynamically exclude all hidden titles
-		allHidden.forEach((title) => {
-			query = query.ne('title', title);
-		});
+		if (results.items.length > 0) {
+			// Extract category objects from items
+			const allCategories = results.items.map((item) => item.category);
 
-		const results = await query.find();
-		const filteredItems = results.items;
+			// Remove duplicates by _id
+			const uniqueCategories = Array.from(
+				new Map(allCategories.map((cat) => [cat._id, cat])).values()
+			);
 
-		console.log('Filtered categories count:', filteredItems.length);
-		console.log('Example item:', filteredItems[0]);
+			// Build hiddenCategoriesPerPage object
+			const hiddenCategoriesPerPage = {};
+			uniqueCategories.forEach((cat) => {
+				hiddenCategoriesPerPage[cat.title] = slugify(cat.title);
+			});
 
-		// Set data and bind each repeater item
-		$w('#categoryRepeater').data = filteredItems;
+			// Filter out current page path
+			const categoriesToShow = Object.entries(hiddenCategoriesPerPage)
+				.filter(([title, slug]) => slug !== currentPath)
+				.map(([title, slug]) => ({
+					_id: slug,
+					title,
+					url: PAGE_URL + slug,
+				}));
 
-		$w('#categoryRepeater').onItemReady(($item, itemData) => {
-			$item('#categoryButton').label = itemData.title;
-			$item('#categoryButton').link = itemData.categoryUrl;
-		});
-	} catch (error) {
-		console.error('Error loading filtered categories:', error);
+			/** DEBUG start **/
+			console.log('CURRENT PATH: ', currentPath);
+			console.log('RESULTS: ', results);
+			console.log('ALL CATEGORIES: ', allCategories);
+			console.log('HIDDEN CATEGORIES PER PAGE: ', hiddenCategoriesPerPage);
+			console.log('UNIQUES CATEGORIES: ', uniqueCategories);
+			console.log('CATEGORIES TO SHOW: ', categoriesToShow);
+			/** DEBUG end **/
+
+			if (categoriesToShow.length > 0) {
+				$w('#categoryRepeater').data = categoriesToShow;
+
+				$w('#categoryRepeater').onItemReady(($item, itemData) => {
+					$item('#categoryButton').label = itemData.title;
+					$item('#categoryButton').link = itemData.url;
+				});
+			} else {
+				$w('#categoryRepeater').collapse();
+			}
+		} else {
+			$w('#categoryRepeater').collapse();
+		}
+	} catch (err) {
+		console.error(err);
+		$w('#categoryRepeater').collapse();
+	}
+
+	function slugify(text) {
+		return text
+			.normalize('NFD') // separate accents
+			.replace(/[\u0300-\u036f]/g, '') // remove accents
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-') // replace non-alphanumerics with hyphens
+			.replace(/^-+|-+$/g, ''); // trim starting/ending hyphens
 	}
 });
