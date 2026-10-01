@@ -2,16 +2,21 @@
 
 This repository contains custom **Wix Velo** code used for the reconstruction of a Hungarian nonprofit organization's website – [Összehangolva Alapítvány](https://www.kiutarakbol.hu) – during the Spring of 2025.
 
-The story of this reconstruction is detailed in the **LinkedIn article**:  
-👉 **[Not Just a Website: Building a Scalable Digital Backbone for a Nonprofit Team](https://www.linkedin.com/pulse/just-website-building-scalable-digital-backbone-nonprofit-nemeth-jgnke/)**
+These two articles capture **the story behind this digital transformation** from complementary perspectives:
 
-The site is built with the **Wix Editor** (not Wix Studio) and enhanced with **Velo by Wix** to enable dynamic behavior, CMS-driven content, and custom logic.
+- **From the developer's side:** [Building a Scalable Digital Backbone for a Nonprofit Team](https://www.linkedin.com/pulse/just-website-building-scalable-digital-backbone-nonprofit-nemeth-jgnke/?trackingId=7oVxe8C4S8OwEhT8iOvvMw%3D%3D)
+- **From the client's point of view:** [A Practicing Psychiatrist’s Case with IT](https://www.linkedin.com/pulse/kisvakond-f%C3%B6ld-felett-egy-gyakorl%C3%B3-pszichi%C3%A1ter-jmsef/?trackingId=RevezHAxZ%2BtZZ4Het%2B40Gw%3D%3D) _(Written in Hungarian; LinkedIn’s built-in translation can help follow the story)_
 
-This repository provides insights into the technical structure, backend logic, and automation workflows implemented in the project.
+<br>
 
----
+> **Disclaimer & Project Status:**  
+> I worked on building and navigating the challenges of this operational backbone from the ground up between **March 2025 and April 2026**, ensuring that every integrated tool—from Stripe to Google Drive—served the people who needed them most.
+>
+> Please note that I am **no longer the active administrator** of this platform and cannot guarantee or take responsibility for any ongoing modifications or functionality visible on the live site.
 
-## 📑 Table of Contents
+<br>
+
+## Table of Contents
 
 - [Setup and Overview](#setup-and-overview)
 - [Visual Comparison: Before and After](#visual-comparison-before-and-after)
@@ -22,9 +27,8 @@ This repository provides insights into the technical structure, backend logic, a
 - [Why Not Use Repeaters for Testimonials?](#why-not-use-repeaters-for-testimonials)
 - [Responsive Design in Wix Editor](#responsive-design-in-wix-editor)
 
----
-
-## 📌 Setup and Overview
+<br>
+## Setup and Overview
 
 - **Platform:** [Wix Editor](https://www.wix.com/) (Classic Editor, not Wix Studio)
 - **Custom Code Tool:** [Velo by Wix](https://dev.wix.com/docs/velo)
@@ -35,9 +39,8 @@ This repository provides insights into the technical structure, backend logic, a
 - All custom code is written directly in the **Wix Editor's IDE** after **Dev Mode** is enabled.
 - `console.log()` and `console.error()` are used for in-browser debugging.
 
----
-
-## 🖼️ Visual Comparison: Before and After
+<br>
+## Visual Comparison: Before and After
 
 These screenshots document key changes made during the website revamp. While visual updates were included, the main focus was on **clarifying the content, reorganizing the structure**, and **making navigation intuitive and accessible**.
 
@@ -52,9 +55,9 @@ As a **full-stack developer**, I'm more focused on **systemic clarity** than art
 | ![Old Events Page](./assets/events-page_old.png)         | ![New Events Page](./assets/events-page_new.png)         |
 | ![Old Support Us Page](./assets/support-up-page_old.png) | ![New Support Us Page](./assets/support-us-page_new.png) |
 
----
+<br>
 
-## 🧱 CMS Structure: Modular and Scalable Design for Programs
+## CMS Structure: Modular and Scalable Design for Programs
 
 To ensure data consistency, easier maintenance, and flexibility, the `Programs` CMS structure is intentionally split across multiple interlinked CMS tables:
 
@@ -76,7 +79,8 @@ To ensure data consistency, easier maintenance, and flexibility, the `Programs` 
 - **Description**: Stores long/short descriptions and audience info, tied to each Program Abbreviation.
 - **Abbreviation**: Ensures consistent program identifiers and references across tables.
 
-ℹ️ Note: This approach follows relational data principles within Wix`s CMS limitations — optimizing for maintainability and data clarity.
+Note:  
+This approach follows relational data principles within Wix`s CMS limitations — optimizing for maintainability and data clarity.
 
 ![Programs CMS](./assets/cms-programs.png)
 
@@ -98,7 +102,7 @@ In contrast, **relational databases (like MySQL or PostgreSQL)** allow to make a
 
 However, Wix's CMS is optimized for simplicity and does not support such advanced database constructs.
 
-## 🔌 How CMS Integration Works
+## How CMS Integration Works
 
 ### COLLECTION_ID
 
@@ -141,9 +145,9 @@ The screenshot below shows where you can find the IDs for Collections and Datase
 - [Querying Items that Reference Other Items](https://dev.wix.com/docs/develop-websites/articles/databases/wix-data/reference-fields/querying-items-that-reference-other-items)
 - [Query Referenced Items](https://dev.wix.com/docs/velo/apis/wix-data/query-referenced)
 
----
+<br>
 
-## 🛠️ Velo Code Features
+## Velo Code Features
 
 📚 **Full API Reference**: [Velo API Reference](https://www.wix.com/velo/reference/api-overview/introduction)
 
@@ -153,13 +157,11 @@ Custom Velo logic is used to enhance UX and manage CMS-based content dynamically
   Dynamic lightboxes populated using `wixWindow.openLightbox()` with contextual data.
 - **Data Queries**  
   Uses `wix-data` to:
-
   - Query CMS collections
   - Filter dynamic datasets
   - Retrieve referenced items via multi-reference fields
 
 - **Repeaters & Datasets**
-
   - Custom rendering logic via `.onItemReady()`
   - Conditional display (e.g., hide/show buttons or images)
 
@@ -168,9 +170,9 @@ Custom Velo logic is used to enhance UX and manage CMS-based content dynamically
 - **Routing & Filtering**
   - Page-level logic to dynamically show/hide content depending on URL path (e.g., filtering CMS categories)
 
----
+<br>
 
-## 📁 Key Code Locations
+## Key Code Locations
 
 ### Pages with Custom Velo Code
 
@@ -198,9 +200,9 @@ Custom Velo logic is used to enhance UX and manage CMS-based content dynamically
 - Adjusts typography and hover styles
 - Improves mobile responsiveness for text and buttons
 
----
+<br>
 
-## 🙅 Why Not Use Repeaters for Testimonials?
+## Why Not Use Repeaters for Testimonials?
 
 My goal was **to display testimonials on individual slides**, keeping the **same clean design for each slide** but **pulling the content dynamically from a CMS table**. Managing testimonials in the CMS makes it easy to update content without touching the code or page design.
 
@@ -213,9 +215,9 @@ By managing each slide's content individually in the code, I can dynamically loa
 
 This approach combines the power of CMS-driven content with the flexibility of a custom slideshow, making it easy to maintain and scalable as the site grows.
 
----
+<br>
 
-## 📱 Responsive Design in Wix Editor
+## Responsive Design in Wix Editor
 
 Wix Editor provides two main breakpoints:
 
