@@ -28,6 +28,7 @@ These two articles capture **the story behind this digital transformation** from
 - [Responsive Design in Wix Editor](#responsive-design-in-wix-editor)
 
 <br>
+
 ## Setup and Overview
 
 - **Platform:** [Wix Editor](https://www.wix.com/) (Classic Editor, not Wix Studio)
@@ -40,6 +41,7 @@ These two articles capture **the story behind this digital transformation** from
 - `console.log()` and `console.error()` are used for in-browser debugging.
 
 <br>
+
 ## Visual Comparison: Before and After
 
 These screenshots document key changes made during the website revamp. While visual updates were included, the main focus was on **clarifying the content, reorganizing the structure**, and **making navigation intuitive and accessible**.
